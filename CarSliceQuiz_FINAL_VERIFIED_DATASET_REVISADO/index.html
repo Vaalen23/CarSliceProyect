@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarSlice Quiz Final</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <div id="toast" class="toast"></div>
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-card glass">
+      <div class="loader-ring"></div>
+      <h2>Cargando garaje</h2>
+      <p id="loading-text">Precargando imágenes reales...</p>
+      <div class="loading-bar"><div id="loading-fill"></div></div>
+    </div>
+  </div>
+  <div id="end-modal" class="end-modal hidden">
+    <div class="end-card glass">
+      <button id="btn-close-end" class="modal-x">×</button>
+      <div class="end-photo-wrap"><img id="end-photo" alt="Coche revelado" /></div>
+      <div class="end-info">
+        <span class="eyebrow">Fin de partida</span>
+        <h2 id="end-title">Resultado</h2>
+        <p id="end-answer"></p>
+        <div class="end-stats" id="end-stats"></div>
+        <div class="end-actions">
+          <button id="btn-retry" class="btn primary">Reintentar</button>
+          <button id="btn-end-home" class="btn ghost">Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="app-shell">
+    <section id="screen-login" class="screen active login-screen">
+      <div class="login-card glass">
+        <div class="brand-block">
+          <div class="logo-mark">CS</div>
+          <div>
+            <h1>CarSlice</h1>
+            <p>Quiz de coches por detalles, faros, llantas, morros y pura intuición.</p>
+          </div>
+        </div>
+        <div class="auth-tabs">
+          <button class="tab active" data-auth="login">Entrar</button>
+          <button class="tab" data-auth="register">Registro</button>
+        </div>
+        <div class="field"><label>Usuario</label><input id="auth-name" autocomplete="username" placeholder="Ej: Valentin" /></div>
+        <div class="field"><label>Contraseña</label><input id="auth-pass" type="password" autocomplete="current-password" placeholder="••••••••" /></div>
+        <button id="btn-auth" class="btn primary full">Entrar al garaje</button>
+        <p class="mini status-db">Base de datos real activada: el login, perfil, ranking y partidas usan Supabase. Si Supabase falla, no se inicia sesión local automáticamente.</p>
+      </div>
+    </section>
+
+    <section id="screen-home" class="screen">
+      <header class="topbar glass">
+        <div><h2>CarSlice</h2><span id="welcome-user">Piloto</span></div>
+        <nav>
+          <button data-go="home" class="nav active">Inicio</button>
+          <button data-go="profile" class="nav">Perfil</button>
+          <button data-go="garage" class="nav">Garaje</button>
+          <button data-go="daily" class="nav">Daily</button>
+          <button data-go="ranking" class="nav">Ranking</button>
+          <button data-go="history" class="nav">Historial</button>
+          <button data-go="settings" class="nav">Ajustes</button>
+          <button data-go="help" class="nav">Ayuda</button>
+          <button id="btn-logout" class="nav danger">Salir</button>
+        </nav>
+      </header>
+      <div class="hero glass">
+        <div>
+          <span class="eyebrow">Versión final</span>
+          <h1>Elige modo antes de arrancar</h1>
+          <p>Nada de empezar directamente: selecciona el tipo de partida, dificultad y entra al reto cuando quieras.</p>
+          <div class="hero-stats">
+            <div><b id="stat-total-points">0</b><span>Puntos</span></div>
+            <div><b id="stat-best-streak">0</b><span>Mejor racha</span></div>
+            <div><b id="stat-collection">0</b><span>Colección</span></div>
+            <div><b id="stat-achievements">0</b><span>Logros</span></div>
+          </div>
+        </div>
+        <div class="daily-card">
+          <span>Daily Challenge</span>
+          <h3 id="daily-title">Reto del día</h3>
+          <p>Mismo coche para todos hoy.</p>
+          <div class="daily-actions"><button class="btn ghost" data-go="daily">Ver daily</button><button class="btn secondary" data-start-mode="daily">Jugar daily</button></div>
+        </div>
+      </div>
+      <div class="mode-grid">
+        <article class="mode-card glass"><h3>Clásico</h3><p>Rondas infinitas hasta fallar. Buena para aprender modelos sin presión.</p><button class="btn primary" data-start-mode="classic">Jugar clásico</button></article>
+        <article class="mode-card glass"><h3>Contrarreloj</h3><p>Único modo con temporizador. Termina al fallar o al agotarse el tiempo.</p><button class="btn primary" data-start-mode="time">Jugar contrarreloj</button></article>
+        <article class="mode-card glass"><h3>Solo piezas</h3><p>Infinito hasta fallar con recortes más agresivos: faro, llanta y parrilla.</p><button class="btn primary" data-start-mode="parts">Jugar piezas</button></article>
+        <article class="mode-card glass"><h3>Categorías</h3><p>Elige una familia: JDM, Europeos, Rally, clásicos, compactos deportivos o supercars.</p><select id="category-select"><option value="all">Todas</option><option value="jdm">JDM</option><option value="euro">Europeos</option><option value="muscle">Muscle</option><option value="supercar">Supercars</option><option value="rally">Rally</option><option value="hot_hatch">Hot Hatch</option><option value="classic">Clásicos</option></select><button class="btn primary" data-start-mode="category">Jugar categoría</button></article>
+      </div>
+      <div class="difficulty glass">
+        <label>Dificultad</label>
+        <select id="difficulty-select"><option value="easy">Fácil: más coche visible</option><option value="normal" selected>Normal: equilibrado</option><option value="hard">Hardcore: más zoom y menos pista visual</option></select>
+      </div>
+    </section>
+
+
+    <section id="screen-daily" class="screen">
+      <header class="topbar glass"><h2>Daily Challenge</h2><button data-go="home" class="btn ghost">Inicio</button></header>
+      <div class="daily-layout">
+        <article class="glass daily-main">
+          <span class="eyebrow">Reto diario global</span>
+          <h1 id="daily-screen-title">Coche del día</h1>
+          <p>Todos los jugadores reciben el mismo coche durante el día. La puntuación se guarda en el ranking daily.</p>
+          <div class="daily-preview-wrap">
+            <img id="daily-preview" alt="Vista previa del daily" />
+            <div class="daily-mask">Imagen parcial del reto</div>
+          </div>
+          <div class="daily-rules">
+            <div><b>1</b><span>coche diario</span></div>
+            <div><b>∞</b><span>hasta fallar</span></div>
+            <div><b>Top 15</b><span>ranking diario</span></div>
+          </div>
+          <button class="btn primary full" data-start-mode="daily">Arrancar Daily Challenge</button>
+        </article>
+        <aside class="glass daily-side">
+          <h3>Top 15 daily</h3>
+          <div id="daily-ranking">Cargando ranking diario...</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="screen-game" class="screen">
+      <header class="game-top glass"><button class="btn ghost" data-go="home">← Modos</button><div><b id="game-mode-label">Clásico</b><span id="round-label">Ronda 1/10</span></div><div class="hud"><span title="Solo hay reloj en Contrarreloj. En el resto aparece ∞">⏱ <b id="timer">∞</b></span><span>🔥 <b id="streak">0</b></span><span>⭐ <b id="score">0</b></span></div></header>
+      <section class="game-layout">
+        <div class="image-stage glass">
+          <div class="scanner"></div>
+          <img id="car-img" alt="Imagen del coche" />
+          <div id="part-badge" class="part-badge">Faro</div>
+        </div>
+        <aside class="answer-panel glass">
+          <h2>¿Qué coche es?</h2>
+          <div class="field suggest-wrap"><label>Marca</label><input id="brand-input" autocomplete="off" placeholder="Escribe marca..." /><div id="brand-suggestions" class="suggestions"></div></div>
+          <div class="field suggest-wrap"><label>Modelo</label><input id="model-input" autocomplete="off" placeholder="Escribe modelo..." /><div id="model-suggestions" class="suggestions"></div></div>
+          <div class="actions">
+            <button id="btn-check" class="btn primary">Responder</button>
+            <button id="btn-hint" class="btn secondary">Iniciales -25</button>
+            <button id="btn-hint-country" class="btn secondary">País -50</button>
+            <button id="btn-hint-year" class="btn secondary">Año -75</button>
+            <button id="btn-hint-type" class="btn secondary">Tipo -50</button>
+            <button id="btn-full-image" class="btn secondary" disabled>Ver imagen completa -100</button>
+            <button id="btn-favorite" class="btn secondary">Favorito</button>
+            <button id="btn-reveal" class="btn ghost">Revelar</button>
+            <button id="btn-continue" class="btn secondary hidden">Continuar</button>
+            <button id="btn-end-run" class="btn ghost hidden-end">Terminar</button>
+          </div>
+          <div id="feedback" class="feedback">Esperando respuesta...</div>
+          <div class="progress"><div id="game-progress"></div></div>
+        </aside>
+      </section>
+    </section>
+
+    <section id="screen-profile" class="screen"><header class="topbar glass"><h2>Perfil</h2><button data-go="home" class="btn ghost">Inicio</button></header><div class="profile-grid"><article class="glass profile-card"><h3>Editar perfil</h3><div class="field"><label>Nuevo nombre</label><input id="profile-name" /></div><div class="field"><label>Nueva contraseña</label><input id="profile-pass" type="password" /></div><button id="btn-save-profile" class="btn primary">Guardar perfil</button></article><article class="glass profile-card"><h3>Estadísticas</h3><div id="profile-stats" class="stat-list"></div></article><article class="glass profile-card"><h3>Títulos</h3><div id="titles-list" class="chips"></div></article><article class="glass profile-card"><h3>Logros</h3><div id="achievements-list" class="achievement-list"></div></article></div></section>
+
+    <section id="screen-garage" class="screen"><header class="topbar glass"><h2>Garaje y colección</h2><button data-go="home" class="btn ghost">Inicio</button></header><div class="garage-actions glass"><button id="btn-gacha" class="btn secondary">Tirada gacha: 250 puntos</button><span id="gacha-result">Desbloquea banners, títulos y coches.</span></div><div id="garage-grid" class="garage-grid"></div></section>
+
+    <section id="screen-ranking" class="screen"><header class="topbar glass"><h2>Ranking</h2><button data-go="home" class="btn ghost">Inicio</button></header><div class="ranking-grid"><article class="glass"><h3>Top jugadores</h3><div id="ranking-users"></div></article><article class="glass"><h3>Mejores partidas</h3><div id="ranking-games"></div></article><article class="glass"><h3>Ranking por modo</h3><select id="ranking-mode-select"><option value="classic">Clásico</option><option value="time">Contrarreloj</option><option value="parts">Solo piezas</option><option value="category">Categoría</option><option value="daily">Daily</option></select><div id="ranking-mode"></div></article></div></section>
+
+    <section id="screen-history" class="screen">
+      <header class="topbar glass"><h2>Historial</h2><button data-go="home" class="btn ghost">Inicio</button></header>
+      <div class="ranking-grid">
+        <article class="glass"><h3>Últimas partidas</h3><div id="history-list"></div></article>
+        <article class="glass"><h3>Resumen rápido</h3><div id="history-summary" class="stat-list"></div></article>
+      </div>
+    </section>
+
+    <section id="screen-settings" class="screen">
+      <header class="topbar glass"><h2>Ajustes</h2><button data-go="home" class="btn ghost">Inicio</button></header>
+      <div class="profile-grid">
+        <article class="glass profile-card"><h3>Juego</h3>
+          <label class="setting-row"><span>Sonidos</span><input id="setting-sounds" type="checkbox" checked></label>
+          <label class="setting-row"><span>Animaciones intensas</span><input id="setting-animations" type="checkbox" checked></label>
+          <label class="setting-row"><span>Mostrar tutorial al entrar</span><input id="setting-tutorial" type="checkbox"></label>
+          <button id="btn-save-settings" class="btn primary">Guardar ajustes</button>
+        </article>
+        <article class="glass profile-card"><h3>Caché local</h3>
+          <p class="mini">Esto solo borra datos del navegador, no de Supabase.</p>
+          <button id="btn-export-data" class="btn secondary">Exportar progreso</button>
+          <button id="btn-reset-local" class="btn ghost danger">Borrar caché local</button>
+        </article>
+      </div>
+    </section>
+
+    <section id="screen-help" class="screen">
+      <header class="topbar glass"><h2>Ayuda y créditos</h2><button data-go="home" class="btn ghost">Inicio</button></header>
+      <div class="help-grid">
+        <article class="glass help-card"><h3>Cómo se juega</h3><p>El juego te enseña una parte del coche. Escribe marca y modelo. Todos los modos son infinitos hasta fallar, salvo Contrarreloj, que además termina cuando se acaba el tiempo.</p></article>
+        <article class="glass help-card"><h3>Pistas</h3><p>Las pistas quitan puntos. La imagen completa cuesta 100 puntos. Al fallar siempre se revela la foto completa.</p></article>
+        <article class="glass help-card"><h3>Imágenes</h3><p>Las fotos se cargan desde Wikimedia/Wikipedia y se validan antes de mostrar ronda para evitar imágenes rotas.</p></article>
+        <article class="glass help-card"><h3>Teclas rápidas</h3><p>Enter responde. Desde cualquier partida puedes volver a Modos. El autocompletado solo muestra marcas y modelos que empiezan por lo escrito.</p></article>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
