@@ -213,3 +213,32 @@ select option:checked, select option:hover{
         height:38px;
     }
 }
+.login-brand-full{
+    display:block;
+    margin-bottom:26px;
+}
+
+.login-brand-full .brand{
+    align-items:center;
+    text-align:center;
+}
+
+.login-brand-full .brand img{
+    width:100%;
+    max-width:100%;
+    height:auto;
+    max-height:180px;
+    object-fit:contain;
+    border-radius:18px;
+}
+
+.login-brand-full .brand p{
+    margin-top:14px;
+    margin-left:0;
+    font-size:15px;
+    text-align:center;
+}
+
+.login-card .logo-mark{
+    display:none;
+}
