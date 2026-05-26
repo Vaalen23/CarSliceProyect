@@ -106,3 +106,110 @@ select option:checked, select option:hover{
   background:#080a14;
   image-rendering:auto;
 }
+/* =========================
+   BRANDING CARSLICE
+========================= */
+
+.brand{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.brand img{
+    height:78px;
+    width:auto;
+    object-fit:contain;
+    filter:
+      drop-shadow(0 0 18px rgba(255,47,143,.18))
+      drop-shadow(0 0 25px rgba(21,230,255,.10));
+    transition:.25s ease;
+}
+
+.brand img:hover{
+    transform:scale(1.02);
+    filter:
+      drop-shadow(0 0 24px rgba(255,47,143,.25))
+      drop-shadow(0 0 32px rgba(21,230,255,.18));
+}
+
+.brand p{
+    color:var(--muted);
+    font-size:14px;
+    margin-left:4px;
+    font-weight:700;
+    letter-spacing:.3px;
+}
+
+.profile-icon{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    object-fit:cover;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:
+      0 0 18px rgba(255,47,143,.18),
+      0 0 25px rgba(21,230,255,.12);
+}
+
+/* Navbar más premium */
+
+.topbar{
+    position:sticky;
+    top:12px;
+    z-index:50;
+    backdrop-filter:blur(20px);
+}
+
+.topbar::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:var(--radius);
+    pointer-events:none;
+    background:
+      linear-gradient(
+        90deg,
+        rgba(21,230,255,.06),
+        transparent,
+        rgba(255,47,143,.06)
+      );
+}
+
+/* Glow suave general */
+
+.glass{
+    overflow:hidden;
+    position:relative;
+}
+
+.glass::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(
+        135deg,
+        rgba(255,255,255,.02),
+        transparent 35%
+      );
+}
+
+/* Logo responsive */
+
+@media(max-width:700px){
+
+    .brand img{
+        height:58px;
+    }
+
+    .brand p{
+        font-size:12px;
+    }
+
+    .profile-icon{
+        width:38px;
+        height:38px;
+    }
+}
